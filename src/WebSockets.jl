@@ -204,6 +204,7 @@ function wswrite(ws::WebSocket, opcode::UInt8, bytes::AbstractVector{UInt8})
 
     n = length(bytes)
     len, extended_len = wslength(n)
+
     if ws.server
         mask = UInt8[]
         txpayload = bytes
@@ -213,13 +214,21 @@ function wswrite(ws::WebSocket, opcode::UInt8, bytes::AbstractVector{UInt8})
         txpayload = ws.txpayload
     end
 
+#    @debug 1 "WebSocket ⬅️  $(WebSocketHeader(opcode, len, extended_len, mask))"
+#    write(ws.io, vcat(opcode, len, extended_len, mask))
+#    println("header: $(vcat(opcode, len, extended_len, mask))")
+#
+#    @debug 2 "          ⬅️  $(txpayload[1:n])"
+#    println("payload: |$txpayload|")
+#    unsafe_write(ws.io, pointer(txpayload), n)
+
     @debug 1 "WebSocket ⬅️  $(WebSocketHeader(opcode, len, extended_len, mask))"
     pkt = vcat(opcode, len, extended_len, mask, txpayload)
-    unsafe_write(ws.io, pointer(pkt), length(pkt))
+    write(ws.io, pkt)
 end
 
 function mask!(to, from, l, mask=rand(UInt8, 4))
-    if length(to) < l
+    if length(to) != l
         resize!(to, l)
     end
     for i in 1:l
