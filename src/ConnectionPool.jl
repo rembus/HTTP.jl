@@ -129,7 +129,12 @@ function Base.eof(c::Connection)
     if bytesavailable(c) > 0
         return false
     end
-    return eof(c.io)
+    try
+        return eof(c.io)
+    catch IOError
+        # suppose a reset connection, assume eof is true
+        return true 
+    end
 end
 
 Base.bytesavailable(c::Connection) = bytesavailable(c.buffer) +
