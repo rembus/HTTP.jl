@@ -60,6 +60,10 @@ function WebSocket(io::T; server=false, binary=false, request=nothing) where T <
                 UInt8[], UInt8[], false, false, request)
 end
 
+function Base.show(io::IO, ws::WebSocket)
+    print(io, ws.io)
+end
+
 # Handshake
 
 function is_upgrade(r::HTTP.Message)
