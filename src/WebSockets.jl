@@ -185,7 +185,7 @@ function IOExtras.closewrite(ws::WebSocket; statuscode=nothing)
     opcode = WS_FINAL | WS_CLOSE
     @debug 1 "WebSocket ⬅️  $(WebSocketHeader(opcode, 0x00))"
     if statuscode === nothing
-        write(ws.io, [opcode, 0x00])
+        wswrite(ws, opcode, UInt8[])
     else
         wswrite(ws, opcode, reinterpret(UInt8, [hton(UInt16(statuscode))]))
     end
