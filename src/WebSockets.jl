@@ -259,7 +259,7 @@ function Base.close(ws::WebSocket; statuscode::Union{Int, Nothing}=nothing)
     close(ws.io)
 end
 
-Base.isopen(ws::WebSocket) = !ws.rxclosed
+Base.isopen(ws::WebSocket) = !ws.rxclosed && isopen(ws.io)
 
 # Receiving Frames
 
